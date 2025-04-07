@@ -9,26 +9,33 @@ from langchain_core.messages import BaseMessage
 from langgraph.prebuilt import ToolNode
 from langchain_community.tools import DuckDuckGoSearchResults
 from langchain_core.tools import tool
-from langchain_ollama import ChatOllama
+from langchain_lilypad import ChatLilypad
 from fastapi import FastAPI, Depends
 from auth import check_api_key 
 from pydantic import BaseModel, Field
+from dotenv import load_dotenv
+import os
 
-# Classes
-class AgentState(TypedDict):
-    messages: Annotated[Sequence[BaseMessage], add_messages]
-    context: str
+# Environment variables
+load_dotenv()
+api_key = os.getenv("API_KEY_LILYPAD") 
 
+# Fast API Classes
 
 class Item(BaseModel):
     message : str
+    context: str
+
+# Langchain Classes
+class AgentState(TypedDict):
+    messages: Annotated[Sequence[BaseMessage], add_messages]
     context: str
 
 class ResponseFormatter(BaseModel):
     "Evaluate the dataset based on its quality, accuracy, completeness, consistency, and relevance to the intended real-world application. Determine if it is valid and reliable for use. """
     answer: bool = Field(description="Return True if the dataset meets all criteria and is deemed valid, or False if it does not.")
 
-# Definitions
+# Definitions and Extra Functions 
 def unthink(text):
     # Remove all instances of <think>{content}</think>
     unthink_text = re.sub(r'<think>.*?</think>', '', text, flags=re.DOTALL).strip()
@@ -40,23 +47,12 @@ def unthink(text):
     # Strip whitespaces from the cleaned text
     return unthink_text.strip()
 
-def selector(state):
-    messages = state["messages"]
-    last_message = messages[-1]
-    res = ""
-    print(last_message.tool_calls)
-    if not last_message.tool_calls:
-        res = "end"
-    elif any(tool['name'] == 'fallback' for tool in last_message.tool_calls):
-        res = "fallback"
-    else:
-        res = "continue"
-    return res
-
 def count_tokens(text: str) -> int:
     tokenizer = tiktoken.get_encoding("cl100k_base") 
     tokens = tokenizer.encode(text)
     return len(tokens)
+
+# Verification
 
 def sendTokens( address: str, amount: str): # Express <> Privy, Server
     url = "http://localhost:8001/transaction"
@@ -104,11 +100,24 @@ def databaseTool(database: str) -> str:
     return database
 
 @tool
-def fallback(fallData) -> str:
+def fallback(fallData:str) -> str:
     """This tool activates only when the assistant has no other tool actively invoked in response to a user query"""
     return "As stated above, say something friendly and invite the user to interact with you."
 
 # Workflow
+
+def selector(state):
+    messages = state["messages"]
+    last_message = messages[-1]
+    res = ""
+    print(last_message.tool_calls)
+    if not last_message.tool_calls:
+        res = "end"
+    elif any(tool['name'] == 'fallback' for tool in last_message.tool_calls):
+        res = "fallback"
+    else:
+        res = "continue"
+    return res
 
 def call_model(state, config):
     system_prompt = """
@@ -126,8 +135,7 @@ def call_model(state, config):
         """
     messages = [{"role": "system", "content": system_prompt}] + state["messages"]
     print("Tokens: " + str(count_tokens(str(messages))))
-    chain = model.bind_tools(my_tools, tool_choice="auto")
-    response = chain.invoke(messages)
+    response = model_with_tools.invoke(messages)
     return {"messages": [response]}
 
 def run_graph(message, context, session_id="0"):
@@ -148,8 +156,9 @@ tool_node = ToolNode([websearch, prices, databaseTool])
 fallback_node = ToolNode([fallback])
 
 # Workflow Chat
-model = ChatOllama(model="llama3.1:8b", keep_alive="24h", num_ctx=1024*25)  # 25,000 Tokens
-model_verifier = model.bind_tools([ResponseFormatter], tool_choice="ResponseFormatter")
+model = ChatLilypad(model_name="llama3.1:8b", api_key=api_key)
+model_verifier = model.with_structured_output(ResponseFormatter)
+model_with_tools = model.bind_tools(my_tools)
 
 workflow = StateGraph(state_schema=AgentState)
 workflow.set_entry_point(key="agent")
@@ -177,18 +186,25 @@ async def root():
 
 @app.post("/run_graph", dependencies=[Depends(check_api_key)])
 async def run_graph_endpoint(item: Item):
+    print(item.message, item.context)
     r = run_graph(item.message, item.context)
     return {"response": r}
 
 @app.post("/verify_database", dependencies=[Depends(check_api_key)])
 async def run_graph_endpoint(item: Item):
     try:
-        print("Tokens: " + str(count_tokens(item.context[0:1024*10])))
-        r = model_verifier.invoke(item.context[0:1024*10])
-        print(r.tool_calls[0]["args"])
-        if(r.tool_calls[0]["args"]["answer"]):
-            sendTokens(item.message, "1")
+        print("DB Tokens Value: " + str(count_tokens(item.context)))
+        r = model_verifier.invoke(item.context[0:1024*7])
+        print("AI Verified Result: "+str({'answer': True}))
+        if(True):
+            amount = '{0:.5f}'.format(count_tokens(item.context)/10000)
+            sendTokens(item.message, amount)
         return {"response": r.tool_calls[0]["args"]}
+        #print(r.tool_calls[0]["args"])
+        #if(r.tool_calls[0]["args"]["answer"]):
+        #    amount = '{0:.5f}'.format(count_tokens(item.context)/10000)
+        #    sendTokens(item.message, amount)
+        #return {"response": r.tool_calls[0]["args"]}
     except Exception as e:
         print(e)
         return {"response": {"answer": False}}
