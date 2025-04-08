@@ -1,16 +1,18 @@
 "use client";
 import { updateDB } from "@/actions/fetchDataset";
 import { updateMainDB } from "@/actions/updateMainDB";
-import { uploadFile, uploadFileDummy } from "@/actions/uploadFile";
+import { uploadFile } from "@/actions/uploadFile";
 import verifyDB from "@/actions/verifyFile";
 import styles from "@/app/upload/page.module.css";
 import { generateString, getUnixTimestamp, sleep } from "@/utils/lib";
-import { Box, Button, Input, LinearProgress, TextField } from "@mui/material";
+import { Box, LinearProgress, TextField } from "@mui/material";
 import { usePrivy, useWallets } from "@privy-io/react-auth";
 import { ethers } from "ethers";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 export default function Upload() {
+  const router = useRouter();
   const { user } = usePrivy();
   const wallet = useWallets();
   const [stage, setStage] = useState(0);
@@ -72,7 +74,6 @@ export default function Upload() {
         verified,
       };
       await updateMainDB(metadata);
-      await updateDB();
       setStage(2);
     }
   };
@@ -159,7 +160,7 @@ export default function Upload() {
             </div>
             <button
               className={styles.searchButton}
-              onClick={() => window.location.href = "https://de-statistics.vercel.app/"}
+              onClick={() => router.push("/")}
             >
               Go to Home
             </button>

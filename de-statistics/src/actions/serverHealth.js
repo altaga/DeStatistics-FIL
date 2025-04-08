@@ -1,7 +1,7 @@
 "use server";
 
 const myHeaders = new Headers();
-myHeaders.append("X-API-Key", process.env.OLLAMA_APIKEY);
+myHeaders.append("X-API-Key", process.env.LILYPAD_APIKEY );
 
 const requestOptions = {
   method: "GET",
@@ -12,7 +12,7 @@ const requestOptions = {
 export async function checkServer() {
   return new Promise(async (resolve, reject) => {
     try {
-      fetch(`${process.env.OLLAMA_URL}/`, requestOptions)
+      fetch(`${process.env.LILYPAD_URL}/`, requestOptions)
         .then((response) => response.json())
         .then((result) => resolve(result))
         .catch(() => resolve(false));

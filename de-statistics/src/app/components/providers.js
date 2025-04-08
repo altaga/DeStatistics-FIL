@@ -8,7 +8,7 @@ import "@fontsource/roboto/700.css";
 import { createTheme } from "@mui/material";
 import { lightBlue, lightGreen } from "@mui/material/colors";
 import { PrivyProvider } from "@privy-io/react-auth";
-import { base } from "viem/chains";
+import { filecoin } from "viem/chains";
 import { ToastContainer } from "react-toastify";
 
 const theme = createTheme({
@@ -31,8 +31,8 @@ export default function Providers({ children }) {
         appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID}
         clientId={process.env.NEXT_PUBLIC_PRIVY_CLIENT_ID}
         config={{
-          defaultChain: base,
-          supportedChains: [base],
+          defaultChain: filecoin,
+          supportedChains: [filecoin],
           appearance: {
             theme: "dark",
           },

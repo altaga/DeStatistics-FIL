@@ -17,36 +17,51 @@ const walletClient = createWalletClient({
 const client = new RecallClient({ walletClient });
 const bucketManager = client.bucketManager();
 
-let GeneralDB = {
-  data: [],
-};
-
 function findObjectByKey(array, key, value) {
   const result = array.find((obj) => obj[key] === value);
   return result || null;
 }
 
-const RECALL_BASE_URL = "https://objects.testnet.recall.chain.love/v1/objects/";
-
-const requestOptions = {
-  method: "GET",
-  redirect: "follow",
-};
-
-async function fetchDB(url) {
+export async function getDB(key) {
   return new Promise(async (resolve, reject) => {
     try {
-      let res = await fetch(url, requestOptions);
-      let parsed = await res.text();
-      resolve(parsed);
+      const { result: genDB } = await bucketManager.get(
+        process.env.RECALL_BUCKET,
+        "datasets"
+      );
+      let content = new TextDecoder().decode(genDB);
+      let parsed = JSON.parse(content);
+      const temp = findObjectByKey(parsed.data, "key", key);
+      if (temp === null) return reject("error");
+      const bucketAddress = temp.bucket;
+      const bucket = await bucketManager.query(bucketAddress, {
+        prefix: "database",
+      });
+      const keys = bucket.result.objects.map((o) => o.key);
+      const filteredKeys = keys.filter((key) => /\d$/.test(key));
+      const sortedKeys = filteredKeys.sort((a, b) => {
+        const numA = parseInt(a.match(/\d$/)[0]);
+        const numB = parseInt(b.match(/\d$/)[0]);
+        return numB - numA;
+      });
+      let values = [];
+      let contents = [];
+      for (const key of sortedKeys) {
+        const response = await bucketManager.get(bucketAddress, key);
+        const content = new TextDecoder().decode(response.result);
+        contents.push(content);
+        const parsed = parseCSVtoJSON_t1(content);
+        values.push(parsed);
+      }
+      resolve({ data: values, contents, ...temp });
     } catch (e) {
       console.log(e);
-      reject(null);
+      reject("error");
     }
   });
 }
 
-export async function updateDB() {
+export async function getAllFetch() {
   return new Promise(async (resolve, reject) => {
     try {
       const { result: object } = await bucketManager.get(
@@ -55,8 +70,7 @@ export async function updateDB() {
       );
       const contents = new TextDecoder().decode(object);
       let parsed = JSON.parse(contents);
-      GeneralDB = parsed;
-      resolve("ok");
+      resolve(parsed.data);
     } catch (e) {
       console.log(e);
       reject(null);
@@ -64,37 +78,4 @@ export async function updateDB() {
   });
 }
 
-export async function getDB(key) {
-  return new Promise(async (resolve, reject) => {
-    try {
-      console.log(GeneralDB);
-      const temp1 = findObjectByKey(GeneralDB.data, "key", key);
-      console.log(temp1);
-      if (temp1 === null) return reject("error");
-      const bucket = temp1.bucket;
-      const { result: object } = await bucketManager.get(bucket, "database");
-      const contents = new TextDecoder().decode(object);
-      const parsed = parseCSVtoJSON_t1(contents);
-      resolve({ ...parsed, ...temp1 });
-    } catch (e) {
-      console.log(e);
-      reject("error");
-    }
-  });
-}
-
-export async function getAllDBs() {
-  return new Promise(async (resolve, reject) => {
-    try {
-      resolve(GeneralDB.data);
-    } catch (e) {
-      console.log(e);
-      reject("error");
-    }
-  });
-}
-
-// updateDB() when server starts
-updateDB()
-  .then(() => console.log("DB updated successfully"))
-  .catch((err) => console.log(err));
+console.log("Server Ready");

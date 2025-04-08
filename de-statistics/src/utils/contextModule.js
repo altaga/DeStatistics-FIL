@@ -8,6 +8,8 @@ class ContextProvider extends React.Component {
     this.state = {
       value: { 
         data:"",
+        version1:0,
+        version2:0
       },
     };
     this.setValue = this.setValue.bind(this);

@@ -1,9 +1,9 @@
 "use server";
 
-const OLLAMA_URL = process.env.OLLAMA_URL;
+const LILYPAD_URL = process.env.LILYPAD_URL;
 
 const myHeaders = new Headers();
-myHeaders.append("X-API-Key", process.env.OLLAMA_APIKEY);
+myHeaders.append("X-API-Key", process.env.LILYPAD_APIKEY );
 myHeaders.append("Content-Type", "application/json");
 
 export default async function verifyDB(address, context) {
@@ -20,7 +20,7 @@ export default async function verifyDB(address, context) {
   };
 
   return new Promise((resolve, reject) => {
-    fetch(`${OLLAMA_URL}/verify_database`, requestOptions)
+    fetch(`${LILYPAD_URL}/verify_database`, requestOptions)
       .then((response) => response.json())
       .then((res) => {
         resolve(res.response.answer === "True" || res.response.answer === true);

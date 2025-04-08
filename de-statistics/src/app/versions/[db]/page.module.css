@@ -1,20 +1,25 @@
-.fullContainer {
-  width: 100vw;
-  top: 10vh;
-  position: absolute;
+.container {
   background-color: white;
+  width: 101%;
+  height: calc(100% - 10vh);
+  margin-top: 10vh;
+  margin-left: -1%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow-y: scroll;
 }
 
-.underContainer {
+.subContainer {
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
 }
 
-.container {
+.subContainer2 {
   width: 80%;
   height: 100%;
   display: flex;
@@ -53,6 +58,20 @@
   padding: 20px 0px 0px 40px;
 }
 
+.versionContainer {
+  background-color: var(--background);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  width: 83%;
+  height: auto;
+  box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px,
+    rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
+  padding: 10px;
+}
+
 .chatContainer {
   padding: 10px;
   border-radius: 10px;
@@ -73,6 +92,18 @@
   font-family: "Roboto", sans-serif;
   font-weight: 700;
   margin: 20px 0px;
+  margin-bottom: 50px;
+  margin-left: 10vw;
+  align-self: flex-start;
+  width: 50%;
+}
+
+.title2 {
+  color: black;
+  font-size: 1.3rem;
+  font-family: "Roboto", sans-serif;
+  font-weight: 700;
+  margin: 40px 0px;
   margin-left: 10vw;
   align-self: flex-start;
   width: 50%;

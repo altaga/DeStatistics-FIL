@@ -8,7 +8,6 @@ DeStatistics is a Web3 platform where AI Agents verify public data, ensure trans
 
 ### Check it out! it is live and on Filecoin Mainnet!:
 - [**Web Page**](https://de-statistics.vercel.app)
-
 - [**Demo Video**](pending...)
 
 **If you're a judge and want to go directly to any category, here are some important links:**
@@ -21,72 +20,91 @@ DeStatistics is a Web3 platform where AI Agents verify public data, ensure trans
 
 <img src="./images/general.drawio.png">
 
+- Filecoin: Utilizamos la EVM para realizar donaciones a los uploaders de las databases y la distribucion de recompensas de nuestro DES ERC20 token segun los resultados de verificacion de la DB mediante AI.
 - Recall: We used this blockchain to provide a secure and decentralized source of storage for AI Agents in the databases and for their verification.
-- LangChain with Lilypad: This framework was primarily used to generate AI Agent workflows and their interactions with the blockchain and users.
-- Lilypad: Main Inference API for tooling and ai verification of the DBs
+- LangChain with Lilypad: This framework was primarily used to generate AI Agent workflows and their interactions with the blockchain and users with out custom Agent module full langchain compatible.
 
 # Filecoin:
 
 Within the entire concept of our platform, we have two functionalities that best represent the power of AI Agents with their interactions with the blockchain and decentralized data storage.
 
-## Ai Agent Chat:
+### Ai Agent Main Chat Tools:
 
 The chat within the platform is intended to provide the user with an assistant to resolve general queries or more complex tasks.
 
-AI Agent Tools on LangChain Framework:
+AI Agent Tools on LangChain Framework with [Lilypad Custom Module](#lilypad):
 
 - Send Tokens: The AI Agent can transfer our token to any user who uploads a database and the AI ​​validates it for addition to our site. This reward is subject to the following tool.
 
-        url = "http://localhost:8001/transaction"
-        payload = json.dumps({
-        "to": address,
-        "value": amount
-        })
-        headers = {
-        'Content-Type': 'application/json'
-        }
-        response = requests.request("POST", url, headers=headers, data=payload)
-        print("Token transfer hash: "+response.text)
+    ```python
+    url = "http://localhost:8001/transaction"
+    payload = json.dumps({
+    "to": address,
+    "value": amount
+    })
+    headers = {
+    'Content-Type': 'application/json'
+    }
+    response = requests.request("POST", url, headers=headers, data=payload)
+    print("Token transfer hash: "+response.text)
+    ```
 
-- DES Token contract: https://filfox.info/en/address/0xA8843d8d35BDE678c5224Ec7e2132Cf68ac27c54
+  - DES Token Contract: 
+    - https://filfox.info/en/address/0xA8843d8d35BDE678c5224Ec7e2132Cf68ac27c54
+  - DES Token Contract Code:
+    - [Contract Code](./contracts/DeSToken.sol)
+  - Transfer Token Code:
+    - [Transfer Token Code](./token-transfer-server/server.js)
 
 - DB Analysis: The AI Agent can perform a complete analysis of a database by cross-checking it with the tools we'll discuss later and issue a verdict as to whether it's a valuable database or not. This verified data is then uploaded to the Recall network so it can be consumed by the website. [Example DB](./example-db/Taxes%20on%20exports.csv)
 
-        class ResponseFormatter(BaseModel):
-        "Evaluate the dataset based on its quality, accuracy, completeness, consistency, and relevance to the intended real-world application. Determine if it is valid and reliable for use. """
-        answer: bool = Field(description="Return True if the dataset meets all criteria and is deemed valid, or False if it does not.")
+    ```python
+    class ResponseFormatter(BaseModel):
+    "Evaluate the dataset based on its quality, accuracy, completeness, consistency, and relevance to the intended real-world application. Determine if it is valid and reliable for use. """
+    answer: bool = Field(description="Return True if the dataset meets all criteria and is deemed valid, or False if it does not.")
+    ```
+
+### AI Extra Tools:
 
 - Tokens Price: Using the Coingecko API, the agent can access real-time prices for the top tokens on the market.
 
-        """Fetch real-time prices of cryptocurrency tokens from the top 25 in the market."""
-        temp_counter = counter
-        flag = False
-        if temp_counter > 25:
-            temp_counter = 25
-            flag = True
-        elif temp_counter < 1:
-            temp_counter = 1
-            flag = True
-        url = f"https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&per_page={temp_counter}"
-        headers = {'accept': 'application/json'}
-        response = requests.request("GET", url, headers=headers, data={})
-        return response.text + (" This information reflects correctly the current market price and is up-to-date. "
-                                if not flag else f"The query was adjusted from {counter} to {temp_counter} to ensure proper functionality.")
+    ```python
+    """Fetch real-time prices of cryptocurrency tokens from the top 25 in the market."""
+    temp_counter = counter
+    flag = False
+    if temp_counter > 25:
+        temp_counter = 25
+        flag = True
+    elif temp_counter < 1:
+        temp_counter = 1
+        flag = True
+    url = f"https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&per_page={temp_counter}"
+    headers = {'accept': 'application/json'}
+    response = requests.request("GET", url, headers=headers, data={})
+    return response.text + (" This information reflects correctly the current market price and is up-to-date. "
+                            if not flag else f"The query was adjusted from {counter} to {temp_counter} to ensure proper functionality.")
+    ```
+
 - WebSearch: With this module, the agent can search for information on the Internet and thus provide the user with real-time information.
 
-        """This tool allows users to perform accurate and targeted internet searches for specific terms or phrases."""
-        res = search.invoke(webprompt)
-        return res
+    ```python
+    """This tool allows users to perform accurate and targeted internet searches for specific terms or phrases."""
+    res = search.invoke(webprompt)
+    return res
+    ```
+---
+**The full code for the AI Agent and Token service is in the following links:**
 
-The full code for the AI Agent is in the following link:
-
-[CODE](./lilypad-server/main.py)
+- [AI Agent Code](./lilypad-server/main.py)
+- [Token Transfer Code](./token-transfer-server/server.js)
 
 # Recall:
 
 Having a secure, fast, and, above all, accessible storage source for our platform and agents was vital to the implementation of a system like ours.
 
-<img src="./images/recall.png">
+## Upload Database:
+
+<img src="./images/recall.drawio.png">
 
 - The user uploads their database and fills in the information required by the platform. We provide you with an [Example DB](./example-db/Taxes%20on%20exports.csv) ready to be uploaded to the Platform.
 
@@ -100,17 +118,58 @@ Having a secure, fast, and, above all, accessible storage source for our platfor
 
 <img src="./images/complete.png">
 
-All interactions with Recall at the code level are in the following links.
+---
+
+**All interactions with Recall at the code level are in the following links.**
 
 - [Get DB](./de-statistics/src/actions/fetchDataset.js)
 - [Upload DB](./de-statistics/src/actions/uploadFile.js)
-- [Update Main DB](./de-statistics/src/actions/updateMainDB.js)
+
+## Version Control:
+
+- Las bases de datos pueden actualizarse, asi que podras cambiar entre versiones de la base de datos si estas estan disponibles.
+
+    <img src="./images/version1.png">
+
+- Si haces clic en el boton del lado izquierdo podras hacer comparativas entre versiones de forma visual, de forma que puedas revisar las diferencias entre datos, a su vez esto nos provee una forma de auditar los cambios entre datasets.
+
+    <img src="./images/version2.png">
+
+- Y finalmente en la parte inferior podremos ver los datos que se hayan modificado completamente en crudo, esto con el fin de hacer una auditoria de los datos desde el archivo de origen.
+
+    <img src="./images/version3.png">
+
+- Por ultimo la organizacion de archivos que se realiza a nivel de Recall es subiendo multiples databases al mismo bucket, pero utilizando el ultimo numero como version.
+
+    <img src="./images/version4.png">
+
+- Y en repositorio general donde guardamos las refrencias de los archivos y versiones. Estos se guardan de la siguiente forma.
+
+    ```json
+    {
+        "key": "gdp",
+        "uploader": "0x4bb24Db28959248E00792aDAF04a8EB32C5AB3Ef",
+        "source": "World Bank",
+        "release": 1738044000,
+        "updated": 1743990630,
+        "title": "World Bank GDP",
+        "description": "GDP National accounts data and OECD National Accounts.",
+        "bucket": "0xff000000000000000000000000000000000000d1",
+        "verified": true,
+        "version": 3
+    }
+    ```
+
+---
+**All version control with Recall at the code level are in the following links.**
+- [Get DB](./de-statistics/src/actions/fetchDataset.js)
+- [Version Comparison](./de-statistics/src/app/versions/[db]/page.js)
 
 # Lilypad:
 
 We create ChatLilypad that is a powerful and customizable chat model built on the `LangChain` framework. It integrates seamlessly with the Lilypad API, extending the functionality of traditional chat models through tool binding, structured output, and workflow integration. This module empowers developers to create dynamic, intelligent conversational agents tailored to their unique needs.
 
-Pypi Public Module: https://pypi.org/project/langchain-lilypad/
+- pypi lilypad module: https://pypi.org/project/langchain-lilypad/
 
 ## Overview
 
@@ -247,3 +306,10 @@ response = structured_llm.invoke("Tell me a joke")
 print(response)
 ```
 This ensures that generated responses conform to the `Joke` schema, improving validation and usability.
+
+---
+
+**All Langchain interactions and Lilypad API at the code level are in the following links.**
+
+- [Module Code](./lilypad-langchain-module/module.py)
+- [AI Agent Code](./lilypad-server/main.py)

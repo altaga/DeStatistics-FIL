@@ -1,19 +1,17 @@
 "use server";
 
-const OLLAMA_URL = process.env.OLLAMA_URL;
+import { baseStat } from "@/utils/constants";
+
+const LILYPAD_URL = process.env.LILYPAD_URL;
 
 const myHeaders = new Headers();
-myHeaders.append("X-API-Key", process.env.OLLAMA_APIKEY);
+myHeaders.append("X-API-Key", process.env.LILYPAD_APIKEY);
 myHeaders.append("Content-Type", "application/json");
 
 export default async function runGraph(message, tempContext = "") {
-  const context =
-    tempContext ===
-    `{"uploader":"","description":"","columns":[""],"row":[""],"dbKey":"","data":[[0]]}`
-      ? ""
-      : tempContext;
+  console.log(message);
+  const context = tempContext === JSON.stringify(baseStat) ? "" : tempContext;
 
-  console.log(context);
   const raw = JSON.stringify({
     message,
     context,
@@ -27,7 +25,7 @@ export default async function runGraph(message, tempContext = "") {
   };
 
   return new Promise((resolve, reject) => {
-    fetch(`${OLLAMA_URL}/run_graph`, requestOptions)
+    fetch(`${LILYPAD_URL}/run_graph`, requestOptions)
       .then((response) => response.json())
       .then((res) => resolve(res.response))
       .catch((error) => reject(error));

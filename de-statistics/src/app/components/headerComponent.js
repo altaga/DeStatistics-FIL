@@ -5,8 +5,10 @@ import React, { useEffect } from "react";
 import styles from "@/app/components/headerComponent.module.css";
 import { toast } from "react-toastify";
 import { checkServer } from "@/actions/serverHealth";
+import { useRouter } from "next/navigation";
 
 export default function HeaderComponent() {
+  const router = useRouter();
   const { ready, login, logout, authenticated, user } = usePrivy();
   const wallet = useWallets();
 
@@ -28,10 +30,7 @@ export default function HeaderComponent() {
 
   return (
     <div className={styles.headerBar}>
-      <div
-        className={styles.logoContainer}
-        onClick={() => (window.location.href = "/")}
-      >
+      <div className={styles.logoContainer} onClick={() => router.push("/")}>
         <img
           src="/logo.png"
           alt="App Logo"
@@ -70,7 +69,7 @@ export default function HeaderComponent() {
               <Button
                 className={styles.button}
                 disabled={!ready}
-                onClick={() => window.location.href = "/upload"}
+                onClick={() => router.push("/upload")}
               >
                 Upload
               </Button>

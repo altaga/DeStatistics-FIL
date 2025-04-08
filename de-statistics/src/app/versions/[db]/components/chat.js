@@ -1,8 +1,9 @@
+'use client';
 import React, { useEffect, useRef, useState } from "react";
 import SendIcon from "@mui/icons-material/Send";
-import AutoResizingTextArea from "@/app/statistics/components/autoResTextArea";
+import AutoResizingTextArea from "@/app/versions/[db]/components/autoResTextArea";
 import { Button } from "@mui/material";
-import styles from "@/app/statistics/components/chat.module.css";
+import styles from "@/app/versions/[db]/components/chat.module.css";
 import Linkify from "react-linkify";
 import runGraph from "@/actions/runGraph";
 import ContextModule from "@/utils/contextModule";
@@ -58,7 +59,6 @@ export default function Chat({ bucket, update }) {
     temp.sort((a, b) => a.timestamp - b.timestamp);
     setMessages(temp);
     setMessage(" ");
-    update();
     setTimeout(() => {
       scrollableRef.current.scrollTop = scrollableRef.current.scrollHeight;
       setMessage("");
