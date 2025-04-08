@@ -169,11 +169,16 @@ Having a secure, fast, and, above all, accessible storage source for our platfor
 
 We create ChatLilypad that is a powerful and customizable chat model built on the `LangChain` framework. It integrates seamlessly with the Lilypad API, extending the functionality of traditional chat models through tool binding, structured output, and workflow integration. This module empowers developers to create dynamic, intelligent conversational agents tailored to their unique needs.
 
-- pypi lilypad module: https://pypi.org/project/langchain-lilypad/
+<img src="./images/lilypad.drawio.png">
 
 ## Overview
 
-ChatLilypad is designed to facilitate intelligent, scalable conversations by combining a custom chat model with external tools via the Lilypad API. The model supports structured responses, tool binding, and graph and workflow integration while providing high configurability for advanced use cases.
+ChatLilypad is designed to facilitate intelligent, scalable conversations by combining a Langchain workflows with external tools via the Lilypad API. 
+
+**It's Public and Ready to Use!:**
+- pypi lilypad module: https://pypi.org/project/langchain-lilypad/
+
+The model supports structured responses, tool binding, and graph and workflow integration while providing high configurability for advanced use cases.
 
 ## Features
 
