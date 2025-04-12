@@ -8,7 +8,7 @@ DeStatistics is a Web3 platform where AI Agents verify public data, ensure trans
 
 ### Check it out! it is live and on Filecoin Mainnet!:
 - [**Web Page**](https://de-statistics.vercel.app)
-- [**Demo Video**](pending...)
+- [**Demo Video**](https://youtu.be/UMMkbywKAuI)
 
 **If you're a judge and want to go directly to any category, here are some important links:**
 
