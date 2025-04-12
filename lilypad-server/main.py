@@ -32,7 +32,7 @@ class AgentState(TypedDict):
     context: str
 
 class ResponseFormatter(BaseModel):
-    "Evaluate the dataset based on its quality, accuracy, completeness, consistency, and relevance to the intended real-world application. Determine if it is valid and reliable for use. """
+    """Evaluate the dataset—either as a complete set or a partial subset—by examining its quality, accuracy, completeness, consistency, and relevance to the intended real-world application. Ensure that the model remains capable of generating valid and reliable outputs, even when provided with incomplete or partial data. Determine the dataset's overall adequacy for its intended purpose."""
     answer: bool = Field(description="Return True if the dataset meets all criteria and is deemed valid, or False if it does not.")
 
 # Definitions and Extra Functions 
@@ -97,6 +97,7 @@ def databaseTool(database: str) -> str:
     """
     This tool activates only when a database context has been explicitly provided as part of the conversation.
     """
+    print("DB Analysis: Start...")
     return database
 
 @tool
@@ -135,6 +136,7 @@ def call_model(state, config):
         """
     messages = [{"role": "system", "content": system_prompt}] + state["messages"]
     print("Tokens: " + str(count_tokens(str(messages))))
+    print("System Prompt: " + str(messages))
     response = model_with_tools.invoke(messages)
     return {"messages": [response]}
 
@@ -157,7 +159,8 @@ fallback_node = ToolNode([fallback])
 
 # Workflow Chat
 model = ChatLilypad(model_name="llama3.1:8b", api_key=api_key)
-model_verifier = model.with_structured_output(ResponseFormatter)
+model_verifier = ChatLilypad(model_name="llama3.1:8b", api_key=api_key, temperature=0.1)
+model_verifier = model_verifier.with_structured_output(ResponseFormatter)
 model_with_tools = model.bind_tools(my_tools)
 
 workflow = StateGraph(state_schema=AgentState)
@@ -188,23 +191,21 @@ async def root():
 async def run_graph_endpoint(item: Item):
     print(item.message, item.context)
     r = run_graph(item.message, item.context)
+    print("Response: " + r)
     return {"response": r}
 
 @app.post("/verify_database", dependencies=[Depends(check_api_key)])
 async def run_graph_endpoint(item: Item):
     try:
         print("DB Tokens Value: " + str(count_tokens(item.context)))
-        r = model_verifier.invoke(item.context[0:1024*7])
-        print("AI Verified Result: "+str({'answer': True}))
-        if(True):
+        r = model_verifier.invoke("Analyze this Database with the tool: \n"+item.context[0:1024])
+        print("AI Verified Result: "+str(r.tool_calls[0]["args"]))
+        if(r.tool_calls[0]["args"]["answer"]):
             amount = '{0:.5f}'.format(count_tokens(item.context)/10000)
+            print( "Tokens transferred: "+str(amount))
+            print( "Rewarded Address: "+str(item.message))
             sendTokens(item.message, amount)
         return {"response": r.tool_calls[0]["args"]}
-        #print(r.tool_calls[0]["args"])
-        #if(r.tool_calls[0]["args"]["answer"]):
-        #    amount = '{0:.5f}'.format(count_tokens(item.context)/10000)
-        #    sendTokens(item.message, amount)
-        #return {"response": r.tool_calls[0]["args"]}
     except Exception as e:
         print(e)
         return {"response": {"answer": False}}
