@@ -19,7 +19,7 @@
   align-items: center;
   justify-content: center;
   width: 60%;
-  height: 70vh;
+  height: 80vh;
   box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px,
     rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
   padding-left: 100px;
@@ -43,7 +43,7 @@
 }
 
 .input {
-  margin-top: 1rem;
+  margin: 1rem 0;
   font-size: 1rem;
   border-radius: 8px;
   font-family: "Roboto", sans-serif;

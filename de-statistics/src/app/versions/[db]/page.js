@@ -1,4 +1,4 @@
-import { getDB } from "@/actions/fetchDataset";
+import { getDB } from "@/actions/recallServer";
 import SimpleCharts from "@/app/versions/[db]/components/chart";
 import styles from "@/app/versions/[db]/page.module.css";
 import ReactDiff from "./components/reactDiff";

@@ -1,24 +1,14 @@
-import { getDB } from "@/actions/fetchDataset";
+import { getDB } from "@/actions/recallServer";
 import SimpleCharts from "@/app/statistics/[db]/components/chart";
 import Chat from "@/app/statistics/[db]/components/chat";
 import styles from "@/app/statistics/[db]/page.module.css";
+import { convertToFilecoin } from "@/utils/lib";
 import Link from "next/link";
 import Donation from "./components/donation";
 import Indicator from "./components/indicators";
 
-/*
-// Example Ethereum address
-const ethAddress = "0x4bb24Db28959248E00792aDAF04a8EB32C5AB3Ef";
-
-// Derive the Filecoin address (f4 address) from the Ethereum address
-const filecoinAddress = newDelegatedEthAddress(ethAddress);
-
-console.log(`Ethereum Address: ${ethAddress}`);
-console.log(`Filecoin Address: ${filecoinAddress.toString()}`);
-*/
-
-export const revalidate = 60 // Check every 60 seconds for updates
-export const dynamicParams = true // Dynamically generate params
+export const revalidate = 60; // Check every 60 seconds for updates
+export const dynamicParams = true; // Dynamically generate params
 
 export async function generateStaticParams() {
   const res = await fetch(process.env.RECALL_URL);
@@ -137,7 +127,23 @@ export default async function Statistic({ params }) {
             }}
           >
             <span className={styles.indicators}>
-              Uploader:{" "}
+              FIL Explorer:{" "}
+              {
+                <Link
+                  href={
+                    "https://filfox.info/en/address/" +
+                    convertToFilecoin(data.uploader)
+                  }
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {convertToFilecoin(data.uploader).substring(0, 10)}...
+                  {convertToFilecoin(data.uploader).substring(
+                    convertToFilecoin(data.uploader).length - 10
+                  )}
+                </Link>
+              }
+              {" "}| Recall Explorer:{" "}
               {
                 <Link
                   href={
@@ -147,7 +153,8 @@ export default async function Statistic({ params }) {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  {data.uploader}
+                  {data.uploader.substring(0, 10)}...
+                  {data.uploader.substring(data.uploader.length - 10)}
                 </Link>
               }
             </span>
@@ -159,7 +166,6 @@ export default async function Statistic({ params }) {
               // Client Component
               <Donation data={data} />
             }
-            
           </div>
         </div>
       </div>

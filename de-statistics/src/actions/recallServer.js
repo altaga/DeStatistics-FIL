@@ -56,7 +56,7 @@ export async function getDB(key) {
       resolve({ data: values, contents, ...temp });
     } catch (e) {
       console.log(e);
-      reject("error");
+      resolve(null);
     }
   });
 }
@@ -73,7 +73,70 @@ export async function getAllFetch() {
       resolve(parsed.data);
     } catch (e) {
       console.log(e);
-      reject(null);
+      resolve(null);
+    }
+  });
+}
+
+// Push Functions
+
+export async function createBucketandPushFile(object) {
+  const { key, file } = object;
+  return new Promise(async (resolve, reject) => {
+    try {
+      const {
+        result: { bucket },
+      } = await bucketManager.create();
+      console.log(bucket);
+      await bucketManager.add(bucket, key, file);
+      resolve(bucket);
+    } catch (e) {
+      console.log(e);
+      resolve(false);
+    }
+  });
+}
+
+export async function pushFile(object) {
+  const { key, file, bucket } = object;
+  return new Promise(async (resolve, reject) => {
+    try {
+      await bucketManager.add(bucket, key, file, {
+        overwrite: true,
+      });
+      resolve(true);
+    } catch (e) {
+      console.log(e);
+      resolve(false);
+    }
+  });
+}
+
+export async function updateMainDB(metadata) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const { result: object } = await bucketManager.get(
+        process.env.RECALL_BUCKET,
+        "datasets"
+      );
+      const contents = new TextDecoder().decode(object);
+      let parsed = JSON.parse(contents);
+      parsed.data = [
+        ...parsed.data.filter((d) => d.key !== metadata.key),
+        metadata,
+      ];
+      console.log(parsed);
+      const content = new TextEncoder().encode(JSON.stringify(parsed));
+      const file = new File([content], "data.json", {
+        type: "application/json",
+      });
+      await bucketManager.add(process.env.RECALL_BUCKET, "datasets", file, {
+        overwrite: true,
+      });
+      resolve(true);
+    } catch (e) {
+      console.log(e);
+      resolve(false);
     }
   });
 }

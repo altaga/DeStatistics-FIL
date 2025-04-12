@@ -5,7 +5,7 @@ import AutoResizingTextArea from "@/app/statistics/[db]/components/autoResTextAr
 import { Button } from "@mui/material";
 import styles from "@/app/statistics/[db]/components/chat.module.css";
 import Linkify from "react-linkify";
-import runGraph from "@/actions/runGraph";
+import {runGraph} from "@/actions/lilypadServer";
 import ContextModule from "@/utils/contextModule";
 import {
   useActiveWallet,

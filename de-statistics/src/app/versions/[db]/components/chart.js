@@ -62,7 +62,7 @@ export default function SimpleCharts({ data, keys }) {
         <BarChart
           xAxis={[{ scaleType: "band", data: dataset.rows }]}
           series={[{ data: dataset.data[selector].map((row) => row) }]}
-          width={600}
+          width={500}
           height={360}
         />
       </div>

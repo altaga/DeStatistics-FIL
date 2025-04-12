@@ -53,6 +53,7 @@ export default function SimpleCharts({ data }) {
   }, [data]);
 
   useEffect(() => {
+    console.log(false);
     return () => {
       myContext.setValue({
         data: baseStat,
@@ -64,7 +65,7 @@ export default function SimpleCharts({ data }) {
     <React.Fragment>
       <div className={styles.headerTitle}>
         <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          {data?.version ?? 1 > 1 ? (
+          {(data?.version ?? 1) > 1 ? (
             <ShareIcon
               onClick={() => router.push(`/versions/${data.key}`)}
               fontSize="medium"
@@ -116,7 +117,7 @@ export default function SimpleCharts({ data }) {
         <BarChart
           xAxis={[{ scaleType: "band", data: dataset.rows }]}
           series={[{ data: dataset.data[selector].map((row) => row) }]}
-          width={600}
+          width={550}
           height={360}
         />
       </div>

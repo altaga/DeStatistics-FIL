@@ -1,11 +1,14 @@
 "use client";
+import { checkServer } from "@/actions/serverHealth";
+import styles from "@/app/components/headerComponent.module.css";
+import { convertToFilecoin } from "@/utils/lib";
 import { Button, ButtonGroup } from "@mui/material";
 import { usePrivy, useWallets } from "@privy-io/react-auth";
-import React, { useEffect } from "react";
-import styles from "@/app/components/headerComponent.module.css";
-import { toast } from "react-toastify";
-import { checkServer } from "@/actions/serverHealth";
 import { useRouter } from "next/navigation";
+import React, { useEffect } from "react";
+import { toast } from "react-toastify";
+
+
 
 export default function HeaderComponent() {
   const router = useRouter();
@@ -46,8 +49,10 @@ export default function HeaderComponent() {
         {authenticated ? (
           <span className={styles.address}>
             {" "}
-            {user.wallet.address?.substring(0, 6)}...
-            {user.wallet.address?.substring(user.wallet.address?.length - 4)}
+            {convertToFilecoin(user.wallet.address).substring(0, 6)}...
+            {convertToFilecoin(user.wallet.address).substring(
+              convertToFilecoin(user.wallet.address).length - 6
+            )}
           </span>
         ) : (
           <span />

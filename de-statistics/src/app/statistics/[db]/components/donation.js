@@ -1,12 +1,14 @@
 "use client";
+import styles from "@/app/statistics/[db]/page.module.css";
 import { abi } from "@/contracts/contract";
+import ContextModule from "@/utils/contextModule";
 import { TextField } from "@mui/material";
+import { usePrivy, useWallets } from "@privy-io/react-auth";
 import { ethers } from "ethers";
 import React, { useState } from "react";
-import styles from "@/app/statistics/[db]/page.module.css";
-import { usePrivy, useWallets } from "@privy-io/react-auth";
 
 export default function Donation(props) {
+  const myContext = React.useContext(ContextModule);
   // Crypto
   const provider = new ethers.providers.JsonRpcProvider(
     process.env.NEXT_PUBLIC_RPC
@@ -41,6 +43,9 @@ export default function Donation(props) {
       const tx = await signer.sendTransaction(transaction);
       await tx.wait();
       setDonation("");
+      myContext.setValue({
+        update: true,
+      });
     } catch (e) {
       console.log(e);
     }
@@ -74,6 +79,7 @@ export default function Donation(props) {
         variant="outlined"
         type="number"
         onChange={(e) => setDonation(e.target.value)}
+        value={donation}
       />
       <button
         disabled={loading}

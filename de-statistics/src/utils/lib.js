@@ -1,3 +1,5 @@
+import { newDelegatedEthAddress } from "@glif/filecoin-address";
+
 export function parseCSVtoJSON_t1(data) {
   /*
     This is an example of a CSV in the format
@@ -41,4 +43,10 @@ export function sleep(ms) {
   return new Promise((resolve) => {
     setTimeout(resolve, ms);
   });
+}
+
+
+export function convertToFilecoin(address) {
+  const ethAddress = newDelegatedEthAddress(address);
+  return ethAddress.toString();
 }

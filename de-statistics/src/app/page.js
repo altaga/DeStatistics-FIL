@@ -1,4 +1,4 @@
-import { getAllFetch } from "@/actions/fetchDataset";
+import { getAllFetch } from "@/actions/recallServer";
 import styles from "@/app/page.module.css";
 import SearchBar from "./components/searchBar";
 import { unstable_cache } from "next/cache";
