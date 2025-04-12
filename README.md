@@ -20,9 +20,13 @@ DeStatistics is a Web3 platform where AI Agents verify public data, ensure trans
 
 <img src="./images/general.drawio.png">
 
-- Filecoin: Utilizamos la EVM para realizar donaciones a los uploaders de las databases y la distribucion de recompensas de nuestro DES ERC20 token segun los resultados de verificacion de la DB mediante AI.
-- Recall: We used this blockchain to provide a secure and decentralized source of storage for AI Agents in the databases and for their verification.
-- LangChain with Lilypad: This framework was primarily used to generate AI Agent workflows and their interactions with the blockchain and users with out custom Agent module full langchain compatible.
+
+- Filecoin: We used the EVM to make donations to database uploaders and distribute rewards of our DES ERC20 token based on the AI ​​DB verification results. It is the base of all our storage and main blockchain to do everything.
+
+- Recall: We used this blockchain to provide a secure and decentralized source of storage for AI Agents in the databases and their verification and version control creating an auditable trail.
+
+- LangChain with Lilypad: This framework was primarily used to generate AI Agent workflows and their interactions with the blockchain and users. This through our custom Agent module full langchain compatible developed to empower the capabilities of the Lilypad API. 
+
 
 # Filecoin:
 
@@ -127,23 +131,23 @@ Having a secure, fast, and, above all, accessible storage source for our platfor
 
 ## Version Control:
 
-- Las bases de datos pueden actualizarse, asi que podras cambiar entre versiones de la base de datos si estas estan disponibles.
+- Databases can be updated, so you can switch between database versions if they are available.
 
-    <img src="./images/version1.png">
+<img src="./images/version1.png">
 
-- Si haces clic en el boton del lado izquierdo podras hacer comparativas entre versiones de forma visual, de forma que puedas revisar las diferencias entre datos, a su vez esto nos provee una forma de auditar los cambios entre datasets.
+- If you click the button on the left, you can visually compare versions so you can review the differences between the data. This also provides a way to audit changes between datasets.
 
-    <img src="./images/version2.png">
+<img src="./images/version2.png">
 
-- Y finalmente en la parte inferior podremos ver los datos que se hayan modificado completamente en crudo, esto con el fin de hacer una auditoria de los datos desde el archivo de origen.
+- And finally, at the bottom, we can see the raw data that has been modified completely. This allows us to audit the data from the source file.
 
-    <img src="./images/version3.png">
+<img src="./images/version3.png">
 
-- Por ultimo la organizacion de archivos que se realiza a nivel de Recall es subiendo multiples databases al mismo bucket, pero utilizando el ultimo numero como version.
+- Finally, the file organization performed at the Recall level involves uploading multiple databases to the same bucket, but using the latest version number.
 
-    <img src="./images/version4.png">
+<img src="./images/version4.png">
 
-- Y en repositorio general donde guardamos las refrencias de los archivos y versiones. Estos se guardan de la siguiente forma.
+- And in the general repository where we store file references and versions. These are saved as follows.
 
     ```json
     {
@@ -167,7 +171,7 @@ Having a secure, fast, and, above all, accessible storage source for our platfor
 
 # Lilypad:
 
-We create ChatLilypad that is a powerful and customizable chat model built on the `LangChain` framework. It integrates seamlessly with the Lilypad API, extending the functionality of traditional chat models through tool binding, structured output, and workflow integration. This module empowers developers to create dynamic, intelligent conversational agents tailored to their unique needs.
+We developed ChatLilypad, a powerful and highly customizable chat module built on the LangChain framework. It integrates seamlessly with the Lilypad API, enhancing traditional chat models with advanced capabilities such as tool binding, structured outputs, and workflow integration. ChatLilypad enables developers to build dynamic, intelligent conversational agents tailored to their specific use cases.
 
 <img src="./images/lilypad.drawio.png">
 
