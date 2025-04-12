@@ -122,8 +122,8 @@ Having a secure, fast, and, above all, accessible storage source for our platfor
 
 **All interactions with Recall at the code level are in the following links.**
 
-- [Get DB](./de-statistics/src/actions/fetchDataset.js)
-- [Upload DB](./de-statistics/src/actions/uploadFile.js)
+- [Get DB](./de-statistics/src/actions/recallServer.js)
+- [Upload DB](./de-statistics/src/actions/recallServer.js)
 
 ## Version Control:
 
@@ -162,7 +162,7 @@ Having a secure, fast, and, above all, accessible storage source for our platfor
 
 ---
 **All version control with Recall at the code level are in the following links.**
-- [Get DB](./de-statistics/src/actions/fetchDataset.js)
+- [Get DB](./de-statistics/src/actions/recallServer.js)
 - [Version Comparison](./de-statistics/src/app/versions/[db]/page.js)
 
 # Lilypad:
